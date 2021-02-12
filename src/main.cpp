@@ -12,7 +12,7 @@ const int servos = 4;// количество сервоприводов в ме�
 
 //переменные для углов горизонтальных осей робота
 int angleHor = 90;
-int devAngHor = 35;
+int devAngHor = 40;
 int angMinHor = angleHor - devAngHor;
 int angMaxHor = angleHor + devAngHor;
 
@@ -24,10 +24,10 @@ int angMaxVer = angleVer + devAngVer;
 
 //параметры сервоприводов
 // сюда записываем полученные показатели среднего положения сервоприводов
-const int servoCenterConst[servos] = {87, 89, 86, 82};
+const int servoCenterConst[servos] = {87, 83, 86, 82};
 int servoAngle[servos];
 Servo servoLegs[servos];
-int rate = 5;
+int rate = 10;
 int delayTime = 100;
 bool debug = true;
 char directionFlag = 's';
@@ -38,8 +38,6 @@ void DebugPhase(bool debugPhase) {
     delay(delayTime);
   }
 }
-
-
 
 //функция для шага вперёд
 void SweepVer(char dirSweep) {
@@ -149,7 +147,7 @@ void BalanceHor() {
 
 void ForwardSlow(int steps = 1) {
   directionFlag = 'f';
-  for (int i = 0; i < steps; ++i) {
+  for (int i = 0; i < steps; ++i) {    
     SweepHor('l');
     SweepVer('l');
     BalanceHor();
@@ -171,142 +169,17 @@ void BackwardSlow(int steps = 1) {
   }
 }
 
-void StopSlow() {
-  if (directionFlag == 'f') {
+void StopSlow(){
+  if (directionFlag == 'f'){
     SweepHor('l');
     BalanceVer();
     BalanceHor();
   }
-  if (directionFlag == 'b') {
+    if (directionFlag == 'b'){
     SweepHor('r');
     BalanceVer();
     BalanceHor();
   }
-}
-
-void TurnLeft(int angTurn = 36) {
-
-  //первая фаза
-  SweepHor('l');
-  for (servoAngle[1]; servoAngle[1] <= servoCenterConst[1] + angTurn; ++servoAngle[1]) {
-    servoLegs[1].write(servoAngle[1]);
-    delay(rate);
-  }
-  BalanceHor();
-
-  //вторая фаза
-  SweepHor('r');
-  for (servoAngle[3]; servoAngle[3] <= servoCenterConst[3] + angTurn; ++servoAngle[3]) {
-
-    servoAngle[1] -= 1;
-
-    servoLegs[1].write(servoAngle[1]);
-    servoLegs[3].write(servoAngle[3]);
-    delay(rate);
-  }
-  BalanceHor();
-
-  //третья фаза
-  SweepHor('l');
-  for (servoAngle[1]; servoAngle[1] <= servoCenterConst[1] + angTurn; ++servoAngle[1]) {
-
-    servoAngle[3] -= 1;
-    servoLegs[1].write(servoAngle[1]);
-    servoLegs[3].write(servoAngle[3]);
-    delay(rate);
-  }
-  BalanceHor();
-
-  //четвертая  фаза
-  SweepHor('r');
-  for (servoAngle[1]; servoAngle[1] >= servoCenterConst[1]; --servoAngle[1]) {
-    servoLegs[1].write(servoAngle[1]);
-    delay(rate);
-  }
-  BalanceHor();
-}
-
-
-void TurnRight(int angTurn = 36) {
-
-  //первая фаза
-  SweepHor('r');
-  for (servoAngle[3]; servoAngle[3] >= servoCenterConst[3] - angTurn; --servoAngle[3]) {
-    servoLegs[3].write(servoAngle[3]);
-    delay(rate);
-  }
-  BalanceHor();
-
-  //вторая фаза
-  SweepHor('l');
-  for (servoAngle[1]; servoAngle[1] >= servoCenterConst[1] - angTurn; --servoAngle[1]) {
-
-    servoAngle[3] += 1;
-
-    servoLegs[1].write(servoAngle[1]);
-    servoLegs[3].write(servoAngle[3]);
-    delay(rate);
-  }
-  BalanceHor();
-
-  //третья фаза
-  SweepHor('r');
-  for (servoAngle[3]; servoAngle[3] >= servoCenterConst[3] - angTurn; --servoAngle[3]) {
-
-    servoAngle[1] += 1;
-    servoLegs[1].write(servoAngle[1]);
-    servoLegs[3].write(servoAngle[3]);
-    delay(rate);
-  }
-  BalanceHor();
-
-  //четвертая  фаза
-  SweepHor('l');
-  for (servoAngle[3]; servoAngle[3] <= servoCenterConst[3]; ++servoAngle[3]) {
-    servoLegs[3].write(servoAngle[3]);
-    delay(rate);
-  }
-  BalanceHor();
-}
-
-void CourseDevLeft(int angTurn = 36) {
-
-  //первая фаза
-  SweepHor('l');
-  for (servoAngle[1]; servoAngle[1] <= servoCenterConst[1] + angTurn; ++servoAngle[1]) {
-    servoLegs[1].write(servoAngle[1]);
-    delay(rate);
-  }
-  BalanceHor();
-
-
-  //четвертая  фаза
-  SweepHor('r');
-  for (servoAngle[1]; servoAngle[1] >= servoCenterConst[1]; --servoAngle[1]) {
-    servoLegs[1].write(servoAngle[1]);
-    delay(rate);
-  }
-  BalanceHor();
-}
-
-
-void CourseDevRight(int angTurn = 36) {
-
-  //первая фаза
-  SweepHor('r');
-  for (servoAngle[3]; servoAngle[3] >= servoCenterConst[3] - angTurn; --servoAngle[3]) {
-    servoLegs[3].write(servoAngle[3]);
-    delay(rate);
-  }
-  BalanceHor();
-
-  //четвертая  фаза
-  SweepHor('l');
-  for (servoAngle[3]; servoAngle[3] <= servoCenterConst[3]; ++servoAngle[3]) {
-    servoLegs[3].write(servoAngle[3]);
-    delay(rate);
-  }
-  BalanceHor();
 }
 
 void setup() {
@@ -325,12 +198,8 @@ void setup() {
 
 void loop() {
   //итоговая версия основного цикла стала намногоболее удобна для работы и понимания
-  //  ForwardSlow();          //  1 функция - движения вперёд  
-  //  BackwardSlow();         //  2 функция - движения назад
-  //  StopSlow();             //  3 функция - остановка
-  //  TurnLeft();             //  4 функция - поворот на 90 градусов налево  
-  //  TurnRight();            //  5 функция - поворот на 90 градусов направо
-  
-  CourseDevLeft();            //  6 функция - отклонение курса налево
-  CourseDevRight();           //  7 функция - отклонение курса направо
+  ForwardSlow();
+  StopSlow();
+  BackwardSlow();
+  StopSlow();
 }
