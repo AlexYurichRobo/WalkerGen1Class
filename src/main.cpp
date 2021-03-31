@@ -18,6 +18,7 @@ void setup()
   hutOnChickenLegs.setDelays(10, 1500);
 }
 
+//главный цикл
 void loop()
 {
   hutOnChickenLegs.forwardSlow();
